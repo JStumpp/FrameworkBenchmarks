@@ -21,14 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class App extends Jooby {
 
-  static final DateTimeFormatter fmt = DateTimeFormatter
-      .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
-      .withZone(ZoneId.of("GMT"));
-
   static final String H_SERVER = "Server";
   static final String SERVER = "Netty";
-
-  static final String H_DATE = "Date";
 
   static final int DB_ROWS = 10000;
 
@@ -42,8 +36,7 @@ public class App extends Jooby {
     /** database via jdbi .*/
     use(new Jdbi());
 
-    get("/plaintext", () -> result(HELLO_WORLD, MediaType.text))
-        .renderer("text");
+    get("/plaintext", () -> result(HELLO_WORLD, MediaType.text)).renderer("text");
 
     get("/json", () -> result(mapper.createObjectNode().put("message", HELLO_WORLD), MediaType.json))
         .renderer("json");
@@ -63,13 +56,11 @@ public class App extends Jooby {
   }
 
   private Result result(final Object value, final MediaType type) {
-    return Results.ok(value).type(type)
-        .header(H_SERVER, SERVER)
-        .header(H_DATE, fmt.format(Instant.ofEpochMilli(System.currentTimeMillis())));
+    return Results.ok(value).type(type).header(H_SERVER, SERVER);
   }
 
   public static void main(final String[] args) throws Exception {
-    new App().start(args);
+    run(App::new, args);
   }
 
 }
